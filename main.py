@@ -29,8 +29,30 @@ class Game:
         self.chessTiles = pg.sprite.Group()
         self.chessPieces = pg.sprite.Group()
 
+        self.setChessArray()
+
         self.playing = True
         self.run()
+
+    def setChessArray(self):
+        self.chessArray = [ [], [], [], [], [], [], [], [] ]
+        for y in range(8):
+            for x in range(8):
+                tile = ChessTile(self, x, y)
+                self.chessArray[y].append(tile)
+                
+        self.printChessArray()
+
+    def printChessArray(self):
+        for y in range(8):
+            for x in range(8):
+                info = ""
+                if self.chessArray[y][x].chessPiece is None:
+                    info = "Null"
+                else:
+                    info = "x"
+                print("{:15}".format(info), end="")
+            print()
 
     def run(self):
         while self.playing:
