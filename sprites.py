@@ -36,7 +36,7 @@ class ChessPiece(pg.sprite.Sprite):
         self.color = color
         self.load_data()
         self.updatePos(x, y)
-        self.possibleMoves = []
+        self.moves = []
     
     def load_data(self):
         self.get_image()
@@ -68,5 +68,22 @@ class ChessPiece(pg.sprite.Sprite):
     def updatePos(self, x, y):
         self.rect.topleft = (x * TILESIZE, y * TILESIZE)
     
-    def getPossibleMoves(self):
-        self.possibleMoves = []
+    def emptyMoves(self):
+        self.moves = []
+
+    def getMoves(self):
+        self.emptyMoves()
+        if(self.piece == "pawn"):
+            pass
+        elif(self.piece == "rook"):
+            pass
+        elif(self.piece == "knight"):
+            pass
+        elif(self.piece == "bishop"):
+            pass
+        elif(self.piece == "queen"):
+            pass
+        else:
+            pass
+        
+        print(self.moves)
