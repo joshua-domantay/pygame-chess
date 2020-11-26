@@ -19,3 +19,6 @@ GREEN = (0, 255, 0)
 BLUE = (0, 0, 255)
 LIGHT_BROWN = (237, 210, 167)
 DARK_BROWN = (55, 33, 20)
+
+# Images
+SPRITESHEET_IMG = "spritesheet.png"
