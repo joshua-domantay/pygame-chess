@@ -26,7 +26,8 @@ class Game:
 
     def new(self):
         # Groups
-        self.all_sprites = pg.sprite.Group()
+        self.chessTiles = pg.sprite.Group()
+        self.chessPieces = pg.sprite.Group()
 
         self.playing = True
         self.run()
@@ -39,7 +40,7 @@ class Game:
 
     def update(self):
         # now = pg.time.get_ticks()
-        self.all_sprites.update()
+        self.chessPieces.update()
     
     def event_quit(self, event):
         if(event.type == pg.QUIT):
@@ -55,8 +56,21 @@ class Game:
             self.event_quit(event)
 
     def draw(self):
-        self.all_sprites.draw(self.screen)
+        self.draw_tiles()
+        self.chessPieces.draw(self.screen)
         pg.display.flip()
+
+    def draw_tiles(self):
+        lightTile = True
+        for x in range(0, WIDTH, TILESIZE):
+            for y in range(0, HEIGHT, TILESIZE):
+                rect = pg.Rect(x, y, TILESIZE, TILESIZE)
+                if lightTile:
+                    pg.draw.rect(self.screen, LIGHT_BROWN, rect)
+                else:
+                    pg.draw.rect(self.screen, DARK_BROWN, rect)
+                lightTile = not lightTile
+            lightTile = not lightTile
 
 # Start
 mode = ""
