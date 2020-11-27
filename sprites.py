@@ -93,7 +93,7 @@ class ChessPiece(pg.sprite.Sprite):
         elif(self.piece == "bishop"):
             self.getBishopMoves()
         elif(self.piece == "queen"):
-            pass
+            self.getQueenMoves()
         else:
             pass
         
@@ -259,3 +259,7 @@ class ChessPiece(pg.sprite.Sprite):
             move = (x + i, y + i)
             if self.bishopMove(move):
                 break
+
+    def getQueenMoves(self):
+        self.getRookMoves()
+        self.getBishopMoves()
