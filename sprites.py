@@ -89,7 +89,7 @@ class ChessPiece(pg.sprite.Sprite):
         elif(self.piece == "rook"):
             self.getRookMoves()
         elif(self.piece == "knight"):
-            pass
+            self.getKnightMoves()
         elif(self.piece == "bishop"):
             pass
         elif(self.piece == "queen"):
@@ -193,3 +193,6 @@ class ChessPiece(pg.sprite.Sprite):
                 if not self.sameColorTile(move[0], move[1]):    # Capture
                     self.moves.append(move)
                 break
+
+    def getKnightMoves(self):
+        pass
