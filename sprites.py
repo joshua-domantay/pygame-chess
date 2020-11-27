@@ -87,7 +87,7 @@ class ChessPiece(pg.sprite.Sprite):
         if(self.piece == "pawn"):
             self.getPawnMoves()
         elif(self.piece == "rook"):
-            pass
+            self.getRookMoves()
         elif(self.piece == "knight"):
             pass
         elif(self.piece == "bishop"):
@@ -146,3 +146,6 @@ class ChessPiece(pg.sprite.Sprite):
         if self.validMove(move):
             if not self.emptyTile(move[0], move[1]):
                 self.moves.append(move)
+
+    def getRookMoves(self):
+        pass
