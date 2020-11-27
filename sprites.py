@@ -95,7 +95,7 @@ class ChessPiece(pg.sprite.Sprite):
         elif(self.piece == "queen"):
             self.getQueenMoves()
         else:
-            pass
+            self.getKingMoves()
         
         # Test print
         print("\t" + self.color + " " + self.piece + ": ", end="")
@@ -263,3 +263,6 @@ class ChessPiece(pg.sprite.Sprite):
     def getQueenMoves(self):
         self.getRookMoves()
         self.getBishopMoves()
+
+    def getKingMoves(self):
+        pass
