@@ -97,7 +97,52 @@ class ChessPiece(pg.sprite.Sprite):
         else:
             pass
         
+        # Test print
+        print("\t" + self.color + " " + self.piece + ": ", end="")
         print(self.moves)
 
+    def emptyTile(self, x, y):
+        return self.game.chessArray[y][x].chessPiece is None
+
+    def validMove(self, move):
+        if((move[0] >= 0) and (move[0] < 8)):
+            if((move[1] >= 0) and (move[1] < 8)):
+                return True
+        return False
+
+    # TODO: Promotion
     def getPawnMoves(self):
-        pass
+        moveTowards = 0
+        if(self.color == "white"):
+            moveTowards = -1 if self.game.whiteBottom else 1
+        else:
+            moveTowards = 1 if self.game.whiteBottom else -1
+        
+        x = self.chessArrayPos[0]
+        y = self.chessArrayPos[1]
+        
+        # Move forward once
+        move = (x, y + moveTowards)
+        if self.validMove(move):
+            if self.emptyTile(move[0], move[1]):
+                self.moves.append(move)
+        
+        # Move forward twice
+        if not self.moved:
+            if(len(self.moves) > 0):    # Move forward once is not blocked
+                move = (x, y + (moveTowards * 2))
+                if self.validMove(move):
+                    if self.emptyTile(move[0], move[1]):
+                        self.moves.append(move)
+        
+        # Capture left diagonal
+        move = (x - 1, y + moveTowards)
+        if self.validMove(move):
+            if not self.emptyTile(move[0], move[1]):
+                self.moves.append(move)
+        
+        # Capture right diagonal
+        move = (x + 1, y + moveTowards)
+        if self.validMove(move):
+            if not self.emptyTile(move[0], move[1]):
+                self.moves.append(move)
