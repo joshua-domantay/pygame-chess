@@ -23,20 +23,24 @@ class ChessTile(pg.sprite.Sprite):
         self.game = game
         self.rect = pg.Rect(0, 0, TILESIZE, TILESIZE)
         self.rect.topleft = (x * TILESIZE, y * TILESIZE)
+        self.chessArrayPos = (x, y)
         self.chessPiece = None
     
     def setChessPiece(self, chessPiece):
         self.chessPiece = chessPiece
 
 class ChessPiece(pg.sprite.Sprite):
-    def __init__(self, game, x, y, piece, color):
+    def __init__(self, game, x, y, piece, color, chessTile):
         pg.sprite.Sprite.__init__(self, game.chessPieces)
         self.game = game
         self.piece = piece
         self.color = color
         self.load_data()
         self.updatePos(x, y)
-        self.moves = []
+        self.chessTile = None
+        self.setChessTile(chessTile)
+        self.moved = False
+        self.moves = []     # Tuples (x, y)
     
     def load_data(self):
         self.get_image()
@@ -67,6 +71,13 @@ class ChessPiece(pg.sprite.Sprite):
 
     def updatePos(self, x, y):
         self.rect.topleft = (x * TILESIZE, y * TILESIZE)
+    
+    def setChessTile(self, chessTile):
+        if self.chessTile is not None:
+            self.chessTile.chessPiece = None
+        self.chessTile = chessTile
+        self.chessArrayPos = self.chessTile.chessArrayPos
+        self.chessTile.chessPiece = self
     
     def emptyMoves(self):
         self.moves = []
