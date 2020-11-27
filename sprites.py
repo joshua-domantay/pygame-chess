@@ -261,4 +261,5 @@ class ChessPiece(pg.sprite.Sprite):
                 break
 
     def getQueenMoves(self):
-        pass
+        self.getRookMoves()
+        self.getBishopMoves()
