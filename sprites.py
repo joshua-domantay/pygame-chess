@@ -194,5 +194,39 @@ class ChessPiece(pg.sprite.Sprite):
                     self.moves.append(move)
                 break
 
+    def knightMove(self, move):
+        if self.validMove(move):
+            if self.emptyTile(move[0], move[1]):
+                self.moves.append(move)
+            else:
+                if not self.sameColorTile(move[0], move[1]):
+                    self.moves.append(move)
+
     def getKnightMoves(self):
-        pass
+        x = self.chessArrayPos[0]
+        y = self.chessArrayPos[1]
+
+        # Move Up
+        move = (x - 1, y - 2)
+        self.knightMove(move)
+        move = (x + 1, y - 2)
+        self.knightMove(move)
+
+        # Move Down
+        move = (x - 1, y + 2)
+        self.knightMove(move)
+        move = (x + 1, y + 2)
+        self.knightMove(move)
+
+        # Move Left
+        move = (x - 2, y - 1)
+        self.knightMove(move)
+        move = (x - 2, y + 1)
+        self.knightMove(move)
+        
+        # Move Right
+        move = (x + 2, y - 1)
+        self.knightMove(move)
+        move = (x + 2, y + 1)
+        self.knightMove(move)
+        
