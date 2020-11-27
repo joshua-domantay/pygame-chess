@@ -112,6 +112,16 @@ class ChessPiece(pg.sprite.Sprite):
             if((move[1] >= 0) and (move[1] < 8)):
                 return True
         return False
+    
+    def pawnMove(self, move):
+        if self.validMove(move):
+            if self.emptyTile(move[0], move[1]):
+                self.moves.append(move)
+
+    def pawnCapture(self, move):
+        if self.validMove(move):
+            if not self.emptyTile(move[0], move[1]):
+                self.moves.append(move)
 
     # TODO: Promotion
     def getPawnMoves(self):
@@ -126,29 +136,30 @@ class ChessPiece(pg.sprite.Sprite):
         
         # Move forward once
         move = (x, y + moveTowards)
-        if self.validMove(move):
-            if self.emptyTile(move[0], move[1]):
-                self.moves.append(move)
+        self.pawnMove(move)
         
         # Move forward twice
         if not self.moved:
             if(len(self.moves) > 0):    # Move forward once is not blocked
                 move = (x, y + (moveTowards * 2))
-                if self.validMove(move):
-                    if self.emptyTile(move[0], move[1]):
-                        self.moves.append(move)
+                self.pawnMove(move)
         
         # Capture left diagonal
         move = (x - 1, y + moveTowards)
-        if self.validMove(move):
-            if not self.emptyTile(move[0], move[1]):
-                self.moves.append(move)
+        self.pawnCapture(move)
         
         # Capture right diagonal
         move = (x + 1, y + moveTowards)
-        if self.validMove(move):
-            if not self.emptyTile(move[0], move[1]):
+        self.pawnCapture(move)
+
+    def rookMove(self, move):
+        if self.emptyTile(move[0], move[1]):    # Move
+            self.moves.append(move)
+            return False
+        else:
+            if not self.sameColorTile(move[0], move[1]):    # Capture
                 self.moves.append(move)
+            return True
 
     def getRookMoves(self):
         x = self.chessArrayPos[0]
@@ -157,76 +168,59 @@ class ChessPiece(pg.sprite.Sprite):
         # Move + Capture Up
         for moveY in range(y - 1, -1, -1):
             move = (x, moveY)
-            if self.emptyTile(move[0], move[1]):
-                self.moves.append(move)
-            else:
-                if not self.sameColorTile(move[0], move[1]):    # Capture
-                    self.moves.append(move)
+            if self.rookMove(move):
                 break
 
         # Move + Capture Down
         for moveY in range(y + 1, 8, 1):
             move = (x, moveY)
-            if self.emptyTile(move[0], move[1]):
-                self.moves.append(move)
-            else:
-                if not self.sameColorTile(move[0], move[1]):    # Capture
-                    self.moves.append(move)
+            if self.rookMove(move):
                 break
 
         # Move + Capture Left
         for moveX in range(x - 1, -1, -1):
             move = (moveX, y)
-            if self.emptyTile(move[0], move[1]):
-                self.moves.append(move)
-            else:
-                if not self.sameColorTile(move[0], move[1]):    # Capture
-                    self.moves.append(move)
+            if self.rookMove(move):
                 break
 
         # Move + Capture Right
         for moveX in range(x + 1, 8, 1):
             move = (moveX, y)
-            if self.emptyTile(move[0], move[1]):
-                self.moves.append(move)
-            else:
-                if not self.sameColorTile(move[0], move[1]):    # Capture
-                    self.moves.append(move)
+            if self.rookMove(move):
                 break
 
     def knightMove(self, move):
         if self.validMove(move):
-            if self.emptyTile(move[0], move[1]):
+            if self.emptyTile(move[0], move[1]):    # Move
                 self.moves.append(move)
             else:
-                if not self.sameColorTile(move[0], move[1]):
+                if not self.sameColorTile(move[0], move[1]):    # Capture
                     self.moves.append(move)
 
     def getKnightMoves(self):
         x = self.chessArrayPos[0]
         y = self.chessArrayPos[1]
 
-        # Move Up
+        # Move + Capture Up
         move = (x - 1, y - 2)
         self.knightMove(move)
         move = (x + 1, y - 2)
         self.knightMove(move)
 
-        # Move Down
+        # Move + Capture Down
         move = (x - 1, y + 2)
         self.knightMove(move)
         move = (x + 1, y + 2)
         self.knightMove(move)
 
-        # Move Left
+        # Move + Capture Left
         move = (x - 2, y - 1)
         self.knightMove(move)
         move = (x - 2, y + 1)
         self.knightMove(move)
         
-        # Move Right
+        # Move + Capture Right
         move = (x + 2, y - 1)
         self.knightMove(move)
         move = (x + 2, y + 1)
         self.knightMove(move)
-        
