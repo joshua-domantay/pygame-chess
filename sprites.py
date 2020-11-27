@@ -87,7 +87,7 @@ class ChessPiece(pg.sprite.Sprite):
         if(self.piece == "pawn"):
             self.getPawnMoves()
         elif(self.piece == "rook"):
-            pass
+            self.getRookMoves()
         elif(self.piece == "knight"):
             pass
         elif(self.piece == "bishop"):
@@ -100,6 +100,9 @@ class ChessPiece(pg.sprite.Sprite):
         # Test print
         print("\t" + self.color + " " + self.piece + ": ", end="")
         print(self.moves)
+
+    def sameColorTile(self, x, y):
+        return self.game.chessArray[y][x].chessPiece.color == self.color
 
     def emptyTile(self, x, y):
         return self.game.chessArray[y][x].chessPiece is None
@@ -146,3 +149,47 @@ class ChessPiece(pg.sprite.Sprite):
         if self.validMove(move):
             if not self.emptyTile(move[0], move[1]):
                 self.moves.append(move)
+
+    def getRookMoves(self):
+        x = self.chessArrayPos[0]
+        y = self.chessArrayPos[1]
+
+        # Move + Capture Up
+        for moveY in range(y - 1, -1, -1):
+            move = (x, moveY)
+            if self.emptyTile(move[0], move[1]):
+                self.moves.append(move)
+            else:
+                if not self.sameColorTile(move[0], move[1]):    # Capture
+                    self.moves.append(move)
+                break
+
+        # Move + Capture Down
+        for moveY in range(y + 1, 8, 1):
+            move = (x, moveY)
+            if self.emptyTile(move[0], move[1]):
+                self.moves.append(move)
+            else:
+                if not self.sameColorTile(move[0], move[1]):    # Capture
+                    self.moves.append(move)
+                break
+
+        # Move + Capture Left
+        for moveX in range(x - 1, -1, -1):
+            move = (moveX, y)
+            if self.emptyTile(move[0], move[1]):
+                self.moves.append(move)
+            else:
+                if not self.sameColorTile(move[0], move[1]):    # Capture
+                    self.moves.append(move)
+                break
+
+        # Move + Capture Right
+        for moveX in range(x + 1, 8, 1):
+            move = (moveX, y)
+            if self.emptyTile(move[0], move[1]):
+                self.moves.append(move)
+            else:
+                if not self.sameColorTile(move[0], move[1]):    # Capture
+                    self.moves.append(move)
+                break
