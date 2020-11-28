@@ -268,6 +268,24 @@ class ChessPiece(pg.sprite.Sprite):
         self.getRookMoves()
         self.getBishopMoves()
 
+    def kingCastling(self, pos, add):
+        x = self.chessArrayPos[0]
+        y = self.chessArrayPos[1]
+
+        if not self.emptyTile(pos, y):
+            rookTile = self.game.chessArray[y][pos]
+            rook = rookTile.chessPiece
+            if not rook.moved:
+                move = (x + add, y)
+                loopAdd = -1 if (add < 0) else 1
+                clear = True
+                for i in range(x + loopAdd, pos, loopAdd):
+                    if not self.emptyTile(i, y):
+                        clear = False
+                        break
+                if clear:
+                    self.moves.append(move)
+
     def kingMove(self, move):
         if(move != self.chessArrayPos):
             self.moves.append(move)
@@ -292,5 +310,7 @@ class ChessPiece(pg.sprite.Sprite):
         # Castling
         if not self.moved:
             # Left rook
-            if not self.emptyTile(0, y):
-                pass
+            self.kingCastling(0, -2)
+
+            # Right rook
+            self.kingCastling(7, 2)
