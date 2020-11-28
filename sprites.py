@@ -95,7 +95,7 @@ class ChessPiece(pg.sprite.Sprite):
         elif(self.piece == "queen"):
             self.getQueenMoves()
         else:
-            pass
+            self.getKingMoves()
         
         # Test print
         print("\t" + self.color + " " + self.piece + ": ", end="")
@@ -161,7 +161,6 @@ class ChessPiece(pg.sprite.Sprite):
                 self.moves.append(move)
             return True
 
-    # TODO: Castling
     def getRookMoves(self):
         x = self.chessArrayPos[0]
         y = self.chessArrayPos[1]
@@ -263,3 +262,23 @@ class ChessPiece(pg.sprite.Sprite):
     def getQueenMoves(self):
         self.getRookMoves()
         self.getBishopMoves()
+
+    def kingMove(self, move):
+        if(move != self.chessArrayPos):
+            self.moves.append(move)
+
+    # TODO: Castling
+    # TODO: Check if move will result to check
+    def getKingMoves(self):
+        x = self.chessArrayPos[0]
+        y = self.chessArrayPos[1]
+
+        for newY in range(-1, 2, 1):
+            for newX in range(-1, 2, 1):
+                move = (x + newX, y + newY)
+                if self.validMove(move):
+                    if self.emptyTile(move[0], move[1]):
+                        self.kingMove(move)
+                    else:
+                        if not self.sameColorTile(move[0], move[1]):
+                            self.kingMove(move)
