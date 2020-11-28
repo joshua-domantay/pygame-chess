@@ -147,9 +147,7 @@ class Game:
                                 i.chessPiece = None
 
                             # Update selected chess piece
-                            self.selectedPiece.updatePos(move[0], move[1])
-                            self.selectedPiece.moved = True
-                            self.selectedPiece.setChessTile(i)
+                            self.selectedPiece.movePiece(move, i)
 
                             self.swapTurn()
                             break

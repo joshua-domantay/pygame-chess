@@ -79,6 +79,11 @@ class ChessPiece(pg.sprite.Sprite):
         self.chessArrayPos = self.chessTile.chessArrayPos
         self.chessTile.chessPiece = self
     
+    def movePiece(self, move, chessTile):
+        self.updatePos(move[0], move[1])
+        self.moved = True
+        self.setChessTile(chessTile)
+    
     def emptyMoves(self):
         self.moves = []
 
@@ -273,6 +278,7 @@ class ChessPiece(pg.sprite.Sprite):
         x = self.chessArrayPos[0]
         y = self.chessArrayPos[1]
 
+        # Move + Capture
         for newY in range(-1, 2, 1):
             for newX in range(-1, 2, 1):
                 move = (x + newX, y + newY)
@@ -282,3 +288,9 @@ class ChessPiece(pg.sprite.Sprite):
                     else:
                         if not self.sameColorTile(move[0], move[1]):
                             self.kingMove(move)
+        
+        # Castling
+        if not self.moved:
+            # Left rook
+            if not self.emptyTile(0, y):
+                pass
