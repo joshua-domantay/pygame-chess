@@ -17,8 +17,8 @@ BLACK = (0, 0, 0)
 RED = (255, 0, 0)
 GREEN = (0, 255, 0)
 BLUE = (0, 0, 255)
-LIGHT_BROWN = (237, 210, 167)
-DARK_BROWN = (55, 33, 20)
+LIGHT_BROWN = (206, 182, 146)
+DARK_BROWN = (89, 53, 32)
 
 # Images
 SPRITESHEET_IMG = "spritesheet.png"
