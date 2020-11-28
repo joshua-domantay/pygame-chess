@@ -4,7 +4,7 @@ Author:         Joshua Anthony Domantay
 Description:    Chess made with Python and Pygame. Practice using Github and Python.
 Date:           25 November 2020
 """
-import os
+from os import path
 import random
 import pygame as pg
 from settings import *
@@ -20,10 +20,10 @@ class Game:
         # Set self.running boolean to true ??
 
     def load_data(self):
-        game_folder = os.path.dirname(__file__)
-        imgs_dir = os.path.join(game_folder, "imgs")
+        game_folder = path.dirname(__file__)
+        imgs_dir = path.join(game_folder, "imgs")
 
-        self.spritesheet = Spritesheet(os.path.join(imgs_dir, SPRITESHEET_IMG))
+        self.spritesheet = Spritesheet(path.join(imgs_dir, SPRITESHEET_IMG))
 
     def new(self):
         # Groups
@@ -32,25 +32,10 @@ class Game:
 
         self.setChessArray()
         self.setChessPieces()
+        self.printChessArray()
 
         self.playing = True
-
-        self.turn = "white"
-        self.selectedPiece = None
-        self.moving = False
-
-        self.printTurn()
         self.run()
-
-    def swapTurn(self):
-        self.turn = "white" if (self.turn == "black") else "black"
-        self.printTurn()
-    
-    def printTurn(self):
-        os.system("cls")
-        print("Pygame Chess")
-        print("Turn: " + self.turn.title())
-        self.printChessArray()
 
     def setChessArray(self):
         self.chessArray = [ [], [], [], [], [], [], [], [] ]
@@ -85,19 +70,23 @@ class Game:
         # Top chess pieces
         for x in range(8):
             # Nonpawns
-            ChessPiece(self, x, 0, nonPawns[x], "black" if black else "white", self.chessArray[0][x])
+            piece = ChessPiece(self, x, 0, nonPawns[x], "black" if black else "white")
+            self.chessArray[0][x].chessPiece = piece
 
             # Pawns
-            ChessPiece(self, x, 1, "pawn", "black" if black else "white", self.chessArray[1][x])
+            piece = ChessPiece(self, x, 1, "pawn", "black" if black else "white")
+            self.chessArray[1][x].chessPiece = piece
         
         black = not black
         # Bottom chess pieces
         for x in range(8):
             # Pawns
-            ChessPiece(self, x, 6, "pawn", "black" if black else "white", self.chessArray[6][x])
+            piece = ChessPiece(self, x, 6, "pawn", "black" if black else "white")
+            self.chessArray[6][x].chessPiece = piece
 
             # Nonpawns
-            ChessPiece(self, x, 7, nonPawns[x], "black" if black else "white", self.chessArray[7][x])
+            piece = ChessPiece(self, x, 7, nonPawns[x], "black" if black else "white")
+            self.chessArray[7][x].chessPiece = piece
                     
     def run(self):
         while self.playing:
@@ -121,39 +110,6 @@ class Game:
     def events(self):
         for event in pg.event.get():
             self.event_quit(event)
-            if(event.type == pg.MOUSEBUTTONUP):
-                self.getPieceMove()
-    
-    def getPieceMove(self):
-        pos = pg.mouse.get_pos()
-        if not self.moving:
-            for i in self.chessTiles:
-                if i.chessPiece is not None:
-                    i.chessPiece.emptyMoves()
-                    if i.rect.collidepoint(pos):
-                        if(i.chessPiece.color == self.turn):
-                            i.chessPiece.getMoves()
-                            self.moving = len(i.chessPiece.moves) > 0
-                            if self.moving:
-                                self.selectedPiece = i.chessPiece
-        else:
-            for i in self.chessTiles:
-                if i.rect.collidepoint(pos):
-                    for move in self.selectedPiece.moves:
-                        if((i.chessArrayPos[0] == move[0]) and (i.chessArrayPos[1] == move[1])):
-                            # Remove chess piece from chessTile
-                            if i.chessPiece is not None:
-                                i.chessPiece.kill()
-                                i.chessPiece = None
-
-                            # Update selected chess piece
-                            self.selectedPiece.updatePos(move[0], move[1])
-                            self.selectedPiece.moved = True
-                            self.selectedPiece.setChessTile(i)
-
-                            self.swapTurn()
-                            break
-            self.moving = False
 
     def draw(self):
         self.draw_tiles()
