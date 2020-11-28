@@ -161,7 +161,6 @@ class ChessPiece(pg.sprite.Sprite):
                 self.moves.append(move)
             return True
 
-    # TODO: Castling
     def getRookMoves(self):
         x = self.chessArrayPos[0]
         y = self.chessArrayPos[1]
@@ -264,5 +263,6 @@ class ChessPiece(pg.sprite.Sprite):
         self.getRookMoves()
         self.getBishopMoves()
 
+    # TODO: Castling
     def getKingMoves(self):
         pass
