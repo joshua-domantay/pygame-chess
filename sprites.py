@@ -263,6 +263,22 @@ class ChessPiece(pg.sprite.Sprite):
         self.getRookMoves()
         self.getBishopMoves()
 
+    def kingMove(self, move):
+        if(move != self.chessArrayPos):
+            self.moves.append(move)
+
     # TODO: Castling
+    # TODO: Check if move will result to check
     def getKingMoves(self):
-        pass
+        x = self.chessArrayPos[0]
+        y = self.chessArrayPos[1]
+
+        for newY in range(-1, 2, 1):
+            for newX in range(-1, 2, 1):
+                move = (x + newX, y + newY)
+                if self.validMove(move):
+                    if self.emptyTile(move[0], move[1]):
+                        self.kingMove(move)
+                    else:
+                        if not self.sameColorTile(move[0], move[1]):
+                            self.kingMove(move)
