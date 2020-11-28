@@ -290,7 +290,7 @@ class ChessPiece(pg.sprite.Sprite):
         if(move != self.chessArrayPos):
             self.moves.append(move)
 
-    # TODO: Castling
+    # TODO: Disable castling if in check
     # TODO: Check if move will result to check
     def getKingMoves(self):
         x = self.chessArrayPos[0]
