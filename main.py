@@ -146,10 +146,24 @@ class Game:
                                 i.chessPiece.kill()
                                 i.chessPiece = None
 
+                            # Castling
+                            if(self.selectedPiece.piece == "king"):
+                                x = move[0]
+                                y = move[1]
+                                moveDir = x - self.selectedPiece.chessArrayPos[0]
+                                if(moveDir <= -2):
+                                    rookTile = self.chessArray[y][0]
+                                    rook = rookTile.chessPiece
+                                    rookMove = (x + 1, y)
+                                    rook.movePiece(rookMove, rookTile)
+                                elif(moveDir >= 2):
+                                    rookTile = self.chessArray[y][7]
+                                    rook = rookTile.chessPiece
+                                    rookMove = (x - 1, y)
+                                    rook.movePiece(rookMove, rookTile)
+
                             # Update selected chess piece
-                            self.selectedPiece.updatePos(move[0], move[1])
-                            self.selectedPiece.moved = True
-                            self.selectedPiece.setChessTile(i)
+                            self.selectedPiece.movePiece(move, i)
 
                             self.swapTurn()
                             break

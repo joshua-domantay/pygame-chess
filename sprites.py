@@ -79,6 +79,11 @@ class ChessPiece(pg.sprite.Sprite):
         self.chessArrayPos = self.chessTile.chessArrayPos
         self.chessTile.chessPiece = self
     
+    def movePiece(self, move, chessTile):
+        self.updatePos(move[0], move[1])
+        self.moved = True
+        self.setChessTile(chessTile)
+    
     def emptyMoves(self):
         self.moves = []
 
@@ -263,16 +268,35 @@ class ChessPiece(pg.sprite.Sprite):
         self.getRookMoves()
         self.getBishopMoves()
 
+    def kingCastling(self, pos, add):
+        x = self.chessArrayPos[0]
+        y = self.chessArrayPos[1]
+
+        if not self.emptyTile(pos, y):
+            rookTile = self.game.chessArray[y][pos]
+            rook = rookTile.chessPiece
+            if not rook.moved:
+                move = (x + add, y)
+                loopAdd = -1 if (add < 0) else 1
+                clear = True
+                for i in range(x + loopAdd, pos, loopAdd):
+                    if not self.emptyTile(i, y):
+                        clear = False
+                        break
+                if clear:
+                    self.moves.append(move)
+
     def kingMove(self, move):
         if(move != self.chessArrayPos):
             self.moves.append(move)
 
-    # TODO: Castling
+    # TODO: Disable castling if in check
     # TODO: Check if move will result to check
     def getKingMoves(self):
         x = self.chessArrayPos[0]
         y = self.chessArrayPos[1]
 
+        # Move + Capture
         for newY in range(-1, 2, 1):
             for newX in range(-1, 2, 1):
                 move = (x + newX, y + newY)
@@ -282,3 +306,11 @@ class ChessPiece(pg.sprite.Sprite):
                     else:
                         if not self.sameColorTile(move[0], move[1]):
                             self.kingMove(move)
+        
+        # Castling
+        if not self.moved:
+            # Left rook
+            self.kingCastling(0, -2)
+
+            # Right rook
+            self.kingCastling(7, 2)
