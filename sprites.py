@@ -41,6 +41,7 @@ class ChessPiece(pg.sprite.Sprite):
         self.setChessTile(chessTile)
         self.moved = False
         self.moves = []     # Tuples (x, y)
+        # self.captureMoves = []
     
     def load_data(self):
         self.get_image()
@@ -83,6 +84,7 @@ class ChessPiece(pg.sprite.Sprite):
         self.updatePos(move[0], move[1])
         self.moved = True
         self.setChessTile(chessTile)
+        self.getMoves()     # Get capture moves basically
     
     def emptyMoves(self):
         self.moves = []
@@ -125,8 +127,9 @@ class ChessPiece(pg.sprite.Sprite):
 
     def pawnCapture(self, move):
         if self.validMove(move):
-            if not self.emptyTile(move[0], move[1]):
+            if ((not self.emptyTile(move[0], move[1])) and (not self.sameColorTile(move[0], move[1]))):
                 self.moves.append(move)
+                # self.captureMoves.append(move)
 
     # TODO: Promotion
     def getPawnMoves(self):
@@ -160,10 +163,12 @@ class ChessPiece(pg.sprite.Sprite):
     def rookMove(self, move):
         if self.emptyTile(move[0], move[1]):    # Move
             self.moves.append(move)
+            # self.captureMoves.append(move)
             return False
         else:
             if not self.sameColorTile(move[0], move[1]):    # Capture
                 self.moves.append(move)
+                # self.captureMoves.append(move)
             return True
 
     def getRookMoves(self):
