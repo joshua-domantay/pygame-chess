@@ -29,6 +29,10 @@ class Game:
         # Groups
         self.chessTiles = pg.sprite.Group()
         self.chessPieces = pg.sprite.Group()
+        self.whitePieces = pg.sprite.Group()
+        self.blackPieces = pg.sprite.Group()
+
+        self.resetCaptureMoves()
 
         self.setChessArray()
         self.setChessPieces()
@@ -41,6 +45,10 @@ class Game:
 
         self.printTurn()
         self.run()
+
+    def resetCaptureMoves(self):
+        self.blackCaptureMoves = []
+        self.whiteCaptureMoves = []
 
     def swapTurn(self):
         self.turn = "white" if (self.turn == "black") else "black"
@@ -165,8 +173,22 @@ class Game:
                             # Update selected chess piece
                             self.selectedPiece.movePiece(move, i)
 
+                            # Get capturing moves
+                            self.resetCaptureMoves()
+                            if(self.turn == "white"):
+                                for piece in self.whitePieces:
+                                    piece.getCaptureMoves()
+                                    for move in piece.captureMoves:
+                                        self.whiteCaptureMoves.append(move)
+                            else:
+                                for piece in self.blackPieces:
+                                    piece.getCaptureMoves()
+                                    for move in piece.captureMoves:
+                                        self.blackCaptureMoves.append(move)
+
                             self.swapTurn()
                             break
+            
             self.moving = False
 
     def draw(self):

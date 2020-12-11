@@ -31,7 +31,12 @@ class ChessTile(pg.sprite.Sprite):
 
 class ChessPiece(pg.sprite.Sprite):
     def __init__(self, game, x, y, piece, color, chessTile):
-        pg.sprite.Sprite.__init__(self, game.chessPieces)
+        groups = game.chessPieces
+        if(color == "white"):
+            groups = game.chessPieces, game.whitePieces
+        else:
+            groups = game.chessPieces, game.blackPieces
+        pg.sprite.Sprite.__init__(self, groups)
         self.game = game
         self.piece = piece
         self.color = color
@@ -41,7 +46,7 @@ class ChessPiece(pg.sprite.Sprite):
         self.setChessTile(chessTile)
         self.moved = False
         self.moves = []     # Tuples (x, y)
-        # self.captureMoves = []
+        self.captureMoves = []
     
     def load_data(self):
         self.get_image()
@@ -84,10 +89,13 @@ class ChessPiece(pg.sprite.Sprite):
         self.updatePos(move[0], move[1])
         self.moved = True
         self.setChessTile(chessTile)
-        self.getMoves()     # Get capture moves basically
     
     def emptyMoves(self):
         self.moves = []
+        self.captureMoves = []
+    
+    def getCaptureMoves(self):
+        self.getMoves()
 
     def getMoves(self):
         self.emptyMoves()
@@ -129,7 +137,7 @@ class ChessPiece(pg.sprite.Sprite):
         if self.validMove(move):
             if ((not self.emptyTile(move[0], move[1])) and (not self.sameColorTile(move[0], move[1]))):
                 self.moves.append(move)
-                # self.captureMoves.append(move)
+            self.captureMoves.append(move)
 
     # TODO: Promotion
     def getPawnMoves(self):
@@ -163,12 +171,12 @@ class ChessPiece(pg.sprite.Sprite):
     def rookMove(self, move):
         if self.emptyTile(move[0], move[1]):    # Move
             self.moves.append(move)
-            # self.captureMoves.append(move)
+            self.captureMoves.append(move)
             return False
         else:
             if not self.sameColorTile(move[0], move[1]):    # Capture
                 self.moves.append(move)
-                # self.captureMoves.append(move)
+            self.captureMoves.append(move)
             return True
 
     def getRookMoves(self):
@@ -203,9 +211,11 @@ class ChessPiece(pg.sprite.Sprite):
         if self.validMove(move):
             if self.emptyTile(move[0], move[1]):    # Move
                 self.moves.append(move)
+                self.captureMoves.append(move)
             else:
                 if not self.sameColorTile(move[0], move[1]):    # Capture
                     self.moves.append(move)
+                self.captureMoves.append(move)
 
     def getKnightMoves(self):
         x = self.chessArrayPos[0]
@@ -289,11 +299,24 @@ class ChessPiece(pg.sprite.Sprite):
                         clear = False
                         break
                 if clear:
+                    if(self.color == "white"):
+                        if move in self.game.blackCaptureMoves:
+                            return
+                    else:
+                        if move in self.game.whiteCaptureMoves:
+                            return
                     self.moves.append(move)
 
     def kingMove(self, move):
         if(move != self.chessArrayPos):
+            if(self.color == "white"):
+                if move in self.game.blackCaptureMoves:
+                    return
+            else:
+                if move in self.game.whiteCaptureMoves:
+                    return
             self.moves.append(move)
+            self.captureMoves.append(move)
 
     # TODO: Disable castling if in check
     # TODO: Check if move will result to check
