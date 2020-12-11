@@ -318,8 +318,9 @@ class ChessPiece(pg.sprite.Sprite):
             self.moves.append(move)
             self.captureMoves.append(move)
 
-    # TODO: Disable castling if in check
-    # TODO: Check if move will result to check
+    # TODO: Find moves that are able to prevent checks without leaving the king on check
+    # TODO: Checkmate algorithm something that will end the game
+    # TODO: Stalemate or draw algorithm that either ends the game after 50 moves rule, king vs king or king having no moves available
     def getKingMoves(self):
         x = self.chessArrayPos[0]
         y = self.chessArrayPos[1]
