@@ -5,11 +5,9 @@ Description:    2D Chess that supports two players made with Pygame and Python.
 Date:           14 September 2022
 """
 # Window settings
-TILESIZE = 64
-WIDTH = TILESIZE * 8
-HEIGHT = TILESIZE * 8
+TILESIZE = 32
 TITLE = "Pygame Chess"
-FPS = 60
+FPS = 30
 
 # Colors
 WHITE = (255, 255, 255)

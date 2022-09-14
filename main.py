@@ -10,15 +10,16 @@ import pygame as pg
 from settings import *
 
 class Game:
-    def __init__(self):
+    def __init__(self, size):
         pg.init()
-        self.screen = pg.display.set_mode((WIDTH, HEIGHT))
+        self.load_data(size)
+        self.screen = pg.display.set_mode((self.width, self.width))
         pg.display.set_caption(TITLE)
         self.clock = pg.time.Clock()
-        self.load_data()
-        # Set self.running boolean to true ??
 
-    def load_data(self):
+    def load_data(self, size):
+        self.tilesize = TILESIZE * size
+        self.width = self.tilesize * 8
         game_folder = os.path.dirname(__file__)
 
     def new(self):
@@ -48,8 +49,33 @@ class Game:
             self.event_quit(event)
 
     def draw(self):
+        self.draw_tiles()
         pg.display.flip()
 
+    def draw_tiles(self):
+        lightTile = True
+        for x in range(0, self.width, self.tilesize):
+            for y in range(0, self.width, self.tilesize):
+                rect = pg.Rect(x, y, self.tilesize, self.tilesize)
+                if lightTile:
+                    pg.draw.rect(self.screen, LIGHT_BROWN, rect)
+                else:
+                    pg.draw.rect(self.screen, DARK_BROWN, rect)
+                lightTile = not lightTile
+            lightTile = not lightTile
+
 # Start
-g = Game()
+size = 2
+
+ans = input("Change window size (Y/N)?\t> ")
+if(ans.lower() == "y"):
+    newSize = input("Enter window size multiplier from 1 to 4 (default 2).\t> ")
+    if(newSize.isnumeric()):
+        size = int(newSize)
+        if(size < 1):
+            size = 1
+        elif(size > 4):
+            size = 4
+
+g = Game(size)
 g.new()
