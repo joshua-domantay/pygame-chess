@@ -65,17 +65,17 @@ class Game:
             lightTile = not lightTile
 
 # Start
-size = 2
+size = 3
 
 ans = input("Change window size (Y/N)?\t> ")
 if(ans.lower() == "y"):
-    newSize = input("Enter window size multiplier from 1 to 4 (default 2).\t> ")
+    newSize = input("Enter window size multiplier from 1 to 7 (default 3).\t> ")
     if(newSize.isnumeric()):
         size = int(newSize)
         if(size < 1):
-            size = 1
-        elif(size > 4):
-            size = 4
+            size = 3
+        elif(size > 7):
+            size = 7
 
 g = Game(size)
 g.new()
