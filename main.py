@@ -38,32 +38,32 @@ class Game:
             row = []
             if((i == 0) or (i == 7)):
                 Rook(self, color, 0, i)
-                row.append("rook")
+                row.append(color + " rook")
                 Knight(self, color, 1, i)
-                row.append("knight")
+                row.append(color + " knight")
                 Bishop(self, color, 2, i)
-                row.append("bishop")
+                row.append(color + " bishop")
                 if(blackTop):
                     Queen(self, color, 3, i)
-                    row.append("queen")
+                    row.append(color + " queen")
                     King(self, color, 4, i)
-                    row.append("king")
+                    row.append(color + " king")
                 else:
                     King(self, color, 3, i)
-                    row.append("king")
+                    row.append(color + " king")
                     Queen(self, color, 4, i)
-                    row.append("queen")
+                    row.append(color + " queen")
                 Bishop(self, color, 5, i)
-                row.append("bishop")
+                row.append(color + " bishop")
                 Knight(self, color, 6, i)
-                row.append("knight")
+                row.append(color + " knight")
                 Rook(self, color, 7, i)
-                row.append("rook")
+                row.append(color + " rook")
                 swap += 1
             elif((i == 1) or (i == 6)):
                 for j in range(8):
                     Pawn(self, color, dir, j, i)
-                    row.append("pawn")
+                    row.append(color + " pawn")
                 swap += 1
             else:
                 for j in range(8):
@@ -85,6 +85,8 @@ class Game:
         self.playing = True
         self.all_sprites = pg.sprite.Group()
         self.generate_chess_matrix()
+        self.turnColor = "white"
+        self.selectedPiece = None
         self.run()
 
     def run(self):
@@ -95,6 +97,24 @@ class Game:
 
     def update(self):
         pass
+
+    def get_enemy_moves(self):
+        for i in self.all_sprites:
+            if(i.color == self.turnColor):
+                i.get_moves()
+
+    def end_move(self):
+        if(self.turnColor == "white"):
+            self.turnColor = "black"
+        else:
+            self.turnColor = "white"
+        self.selectedPiece = None
+        self.get_enemy_moves()      # To prevent King from moving on a capture tile
+    
+    def move_piece(self, move):
+        self.chessMatrix[self.selectedPiece.y][self.selectedPiece.x] = " "
+        self.chessMatrix[move[1]][move[0]] = (self.selectedPiece.color + " " + self.selectedPiece.piece)
+        self.selectedPiece.move(move[0], move[1])
     
     def event_quit(self, event):
         if(event.type == pg.QUIT):
@@ -104,6 +124,29 @@ class Game:
             if(event.key == pg.K_ESCAPE):
                 pg.quit()
                 quit()
+        if(event.type == pg.MOUSEBUTTONUP):
+            pos = pg.mouse.get_pos()
+            if(self.selectedPiece == None):
+                for i in self.all_sprites:
+                    if(i.rect.collidepoint(pos)):
+                        if(i.color == self.turnColor):
+                            i.get_moves()
+                            self.selectedPiece = i
+            else:
+                move = (int(pos[0] / self.tilesize), int(pos[1] / self.tilesize))
+                validMove = False
+                for i in self.selectedPiece.possibleMoves:
+                    if(move == i):
+                        for i in self.all_sprites:
+                            if(i.rect.collidepoint(pos)):
+                                i.kill()
+
+                        self.move_piece(move)
+                        self.end_move()
+                        validMove = True
+                        break
+                if(not validMove):
+                    self.selectedPiece = None
 
     def events(self):
         for event in pg.event.get():
