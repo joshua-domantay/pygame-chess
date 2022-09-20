@@ -333,11 +333,82 @@ class Queen(pg.sprite.Sprite):
         self.y = y
         self.rect.topleft = (x * self.game.tilesize, y * self.game.tilesize)
 
+    def get_rook_moves(self):
+        # Up
+        i = (self.y - 1)
+        while(i >= 0):
+            move = (self.x, i)
+            if self.check_move_r(move):
+                break
+            i -= 1
+        
+        # Down
+        i = (self.y + 1)
+        while(i <= 7):
+            move = (self.x, i)
+            if self.check_move_r(move):
+                break
+            i += 1
+        
+        # Left
+        i = (self.x - 1)
+        while(i >= 0):
+            move = (i, self.y)
+            if self.check_move_r(move):
+                break
+            i -= 1
+
+        # Right
+        i = (self.x + 1)
+        while(i <= 7):
+            move = (i, self.y)
+            if self.check_move_r(move):
+                break
+            i += 1
+
+    def get_bishop_moves_h(self, iX, iY, iXadd, iYadd):
+        while True:
+            move = (iX, iY)
+            if self.check_move_b(move):
+                break
+            iX += iXadd
+            iY += iYadd
+    
+    def get_bishop_moves(self):
+        self.get_bishop_moves_h((self.x - 1), (self.y - 1), -1, -1)     # Diagonal Up-Left
+        self.get_bishop_moves_h((self.x + 1), (self.y - 1), 1, -1)      # Diagonal Up-Right
+        self.get_bishop_moves_h((self.x - 1), (self.y + 1), -1, 1)      # Diagonal Down-Left
+        self.get_bishop_moves_h((self.x + 1), (self.y + 1), 1, 1)       # Diagonal Down-Right
+
     def get_moves(self):
         reset_moves(self)
+        
+        self.get_rook_moves()
+        self.get_bishop_moves()
     
-    def check_move(self, move):
-        pass
+    def check_move_r(self, move):
+        if(self.game.chessMatrix[move[1]][move[0]] == None):
+            self.possibleMoves.append(move)
+            self.captureMoves.append(move)
+        else:
+            if(self.game.chessMatrix[move[1]][move[0]].color != self.color):        # If there is a piece and is not the same color, then add move
+                self.possibleMoves.append(move)
+                self.captureMoves.append(move)
+            return True     # Stop checking moves since blocked by another piece
+        return False
+    
+    def check_move_b(self, move):
+        if(check_move_bounds(move)):
+            if(self.game.chessMatrix[move[1]][move[0]] == None):
+                self.possibleMoves.append(move)
+                self.captureMoves.append(move)
+            else:
+                if(self.game.chessMatrix[move[1]][move[0]].color != self.color):        # If there is a piece and is not the same color, then add move
+                    self.possibleMoves.append(move)
+                    self.captureMoves.append(move)
+                return True     # Stop checking moves since blocked by another piece
+            return False
+        return True
     
 class King(pg.sprite.Sprite):
     def __init__(self, game, color, x, y):
