@@ -63,6 +63,7 @@ class Pawn(pg.sprite.Sprite):
 
     def get_moves(self):
         reset_moves(self)
+
         if(self.dir == "down"):
             move = (self.x, (self.y + 1))
             self.check_move(move, False)
@@ -131,9 +132,49 @@ class Rook(pg.sprite.Sprite):
 
     def get_moves(self):
         reset_moves(self)
+
+        # Up
+        i = (self.y - 1)
+        while(i >= 0):
+            move = (self.x, i)
+            if self.check_move(move):
+                break
+            i -= 1
+        
+        # Down
+        i = (self.y + 1)
+        while(i <= 7):
+            move = (self.x, i)
+            if self.check_move(move):
+                break
+            i += 1
+        
+        # Left
+        i = (self.x - 1)
+        while(i >= 0):
+            move = (i, self.y)
+            if self.check_move(move):
+                break
+            i -= 1
+
+        # Right
+        i = (self.x + 1)
+        while(i <= 7):
+            move = (i, self.y)
+            if self.check_move(move):
+                break
+            i += 1
     
     def check_move(self, move):
-        pass
+        if(self.game.chessMatrix[move[1]][move[0]] == None):
+            self.possibleMoves.append(move)
+            self.captureMoves.append(move)
+        else:
+            if(self.game.chessMatrix[move[1]][move[0]].color != self.color):        # If there is a piece and is not the same color, then add move
+                self.possibleMoves.append(move)
+                self.captureMoves.append(move)
+            return True     # Stop checking moves since blocked by another piece
+        return False
     
 class Knight(pg.sprite.Sprite):
     def __init__(self, game, color, x, y):
