@@ -274,12 +274,35 @@ class Bishop(pg.sprite.Sprite):
         self.x = x
         self.y = y
         self.rect.topleft = (x * self.game.tilesize, y * self.game.tilesize)
+    
+    def get_moves_h(self, iX, iY, iXadd, iYadd):
+        while True:
+            move = (iX, iY)
+            if self.check_move(move):
+                break
+            iX += iXadd
+            iY += iYadd
 
     def get_moves(self):
         reset_moves(self)
+        
+        self.get_moves_h((self.x - 1), (self.y - 1), -1, -1)    # Diagonal Up-Left
+        self.get_moves_h((self.x + 1), (self.y - 1), 1, -1)     # Diagonal Up-Right
+        self.get_moves_h((self.x - 1), (self.y + 1), -1, 1)     # Diagonal Down-Left
+        self.get_moves_h((self.x + 1), (self.y + 1), 1, 1)      # Diagonal Down-Right
     
     def check_move(self, move):
-        pass
+        if(check_move_bounds(move)):
+            if(self.game.chessMatrix[move[1]][move[0]] == None):
+                self.possibleMoves.append(move)
+                self.captureMoves.append(move)
+            else:
+                if(self.game.chessMatrix[move[1]][move[0]].color != self.color):        # If there is a piece and is not the same color, then add move
+                    self.possibleMoves.append(move)
+                    self.captureMoves.append(move)
+                return True     # Stop checking moves since blocked by another piece
+            return False
+        return True
     
 class Queen(pg.sprite.Sprite):
     def __init__(self, game, color, x, y):
