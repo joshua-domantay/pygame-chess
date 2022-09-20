@@ -207,9 +207,44 @@ class Knight(pg.sprite.Sprite):
 
     def get_moves(self):
         reset_moves(self)
+
+        # Move Up
+        if((self.y - 2) >= 0):
+            move = ((self.x - 1), (self.y - 2))
+            self.check_move(move)
+            move = ((self.x + 1), (self.y - 2))
+            self.check_move(move)
+        
+        # Move Down
+        if((self.y + 2) <= 7):
+            move = ((self.x - 1), (self.y + 2))
+            self.check_move(move)
+            move = ((self.x + 1), (self.y + 2))
+            self.check_move(move)
+
+        # Move Left
+        if((self.x - 2) >= 0):
+            move = ((self.x - 2), (self.y - 1))
+            self.check_move(move)
+            move = ((self.x - 2), (self.y + 1))
+            self.check_move(move)
+        
+        # Move Down
+        if((self.x + 2) <= 7):
+            move = ((self.x + 2), (self.y - 1))
+            self.check_move(move)
+            move = ((self.x + 2), (self.y + 1))
+            self.check_move(move)
     
     def check_move(self, move):
-        pass
+        if(check_move_bounds(move)):
+            if(self.game.chessMatrix[move[1]][move[0]] == None):
+                self.possibleMoves.append(move)
+                self.captureMoves.append(move)
+            else:
+                if(self.game.chessMatrix[move[1]][move[0]].color != self.color):
+                    self.possibleMoves.append(move)
+                    self.captureMoves.append(move)
     
 class Bishop(pg.sprite.Sprite):
     def __init__(self, game, color, x, y):
