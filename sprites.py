@@ -410,6 +410,7 @@ class Queen(pg.sprite.Sprite):
             return False
         return True
     
+# TODO: Castling - main.py: Check if moving a same color piece will check King. Check if King capturing piece will check King. Maybe??? Check if move will capture King next turn
 class King(pg.sprite.Sprite):
     def __init__(self, game, color, x, y):
         pg.sprite.Sprite.__init__(self, game.all_sprites)
@@ -443,7 +444,20 @@ class King(pg.sprite.Sprite):
 
     def get_moves(self):
         reset_moves(self)
+
+        for i in range(-1, 2, 1):
+            for j in range(-1, 2, 1):
+                move = ((self.x + j), (self.y + i))
+                if(move != (self.x, self.y)):
+                    self.check_move(move)
     
     def check_move(self, move):
-        pass
+        if(check_move_bounds(move)):
+            if(self.game.chessMatrix[move[1]][move[0]] == None):
+                self.possibleMoves.append(move)
+                self.captureMoves.append(move)
+            else:
+                if(self.game.chessMatrix[move[1]][move[0]].color != self.color):        # If there is a piece and is not the same color, then add move
+                    self.possibleMoves.append(move)
+                    self.captureMoves.append(move)
     
