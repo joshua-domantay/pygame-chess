@@ -36,50 +36,34 @@ class Game:
         swap = 0
         for i in range(8):
             row = []
-            if((i == 0) or (i == 7)):
-                Rook(self, color, 0, i)
-                row.append(color + " rook")
-                Knight(self, color, 1, i)
-                row.append(color + " knight")
-                Bishop(self, color, 2, i)
-                row.append(color + " bishop")
+            if((i == 0) or (i == 7)):       # Pieces
+                row.append(Rook(self, color, 0, i))
+                row.append(Knight(self, color, 1, i))
+                row.append(Bishop(self, color, 2, i))
                 if(blackTop):
-                    Queen(self, color, 3, i)
-                    row.append(color + " queen")
-                    King(self, color, 4, i)
-                    row.append(color + " king")
+                    row.append(Queen(self, color, 3, i))
+                    row.append(King(self, color, 4, i))
                 else:
-                    King(self, color, 3, i)
-                    row.append(color + " king")
-                    Queen(self, color, 4, i)
-                    row.append(color + " queen")
-                Bishop(self, color, 5, i)
-                row.append(color + " bishop")
-                Knight(self, color, 6, i)
-                row.append(color + " knight")
-                Rook(self, color, 7, i)
-                row.append(color + " rook")
+                    row.append(King(self, color, 3, i))
+                    row.append(Queen(self, color, 4, i))
+                row.append(Bishop(self, color, 5, i))
+                row.append(Knight(self, color, 6, i))
+                row.append(Rook(self, color, 7, i))
                 swap += 1
-            elif((i == 1) or (i == 6)):
+            elif((i == 1) or (i == 6)):     # Pawns
                 for j in range(8):
-                    Pawn(self, color, dir, j, i)
-                    row.append(color + " pawn")
+                    row.append(Pawn(self, color, dir, j, i))
                 swap += 1
             else:
                 for j in range(8):
-                    row.append(" ")
-            if(swap == 2):
+                    row.append(None)
+            if(swap == 2):      # Basically pieces and pawns are placed so swap color and direction for pawns
                 if(color == "black"):
                     color = "white"
                 else:
                     color = "black"
                 dir = "up"
             self.chessMatrix.append(row)
-        self.print_chess_matrix()
-
-    def print_chess_matrix(self):
-        for i in range(8):
-            print(self.chessMatrix[i])
 
     def new(self):
         self.playing = True
@@ -112,9 +96,11 @@ class Game:
         self.get_enemy_moves()      # To prevent King from moving on a capture tile
     
     def move_piece(self, move):
-        self.chessMatrix[self.selectedPiece.y][self.selectedPiece.x] = " "
-        self.chessMatrix[move[1]][move[0]] = (self.selectedPiece.color + " " + self.selectedPiece.piece)
-        self.selectedPiece.move(move[0], move[1])
+        self.chessMatrix[self.selectedPiece.y][self.selectedPiece.x] = None     # Remove piece from current tile on Chess 2D array
+        if(self.chessMatrix[move[1]][move[0]] != None):     # If capturing, remove enemy piece from game
+            self.chessMatrix[move[1]][move[0]].kill()
+        self.selectedPiece.move(move[0], move[1])       # Move piece
+        self.chessMatrix[move[1]][move[0]] = self.selectedPiece     # Move piece on Chess 2D array
     
     def event_quit(self, event):
         if(event.type == pg.QUIT):
@@ -126,26 +112,17 @@ class Game:
                 quit()
         if(event.type == pg.MOUSEBUTTONUP):
             pos = pg.mouse.get_pos()
+            pos = (int(pos[0] / self.tilesize), int(pos[1] / self.tilesize))        # Easier to get which tile is clicked and easier access to chessMatrix
             if(self.selectedPiece == None):
-                for i in self.all_sprites:
-                    if(i.rect.collidepoint(pos)):
-                        if(i.color == self.turnColor):
-                            i.get_moves()
-                            self.selectedPiece = i
+                if(self.chessMatrix[pos[1]][pos[0]] != None):       # Check if there is a piece on tile
+                    if(self.chessMatrix[pos[1]][pos[0]].color == self.turnColor):       # Check if piece is the same color as turn
+                        self.selectedPiece = self.chessMatrix[pos[1]][pos[0]]
+                        self.selectedPiece.get_moves()
             else:
-                move = (int(pos[0] / self.tilesize), int(pos[1] / self.tilesize))
-                validMove = False
-                for i in self.selectedPiece.possibleMoves:
-                    if(move == i):
-                        for i in self.all_sprites:
-                            if(i.rect.collidepoint(pos)):
-                                i.kill()
-
-                        self.move_piece(move)
-                        self.end_move()
-                        validMove = True
-                        break
-                if(not validMove):
+                if(pos in self.selectedPiece.possibleMoves):
+                    self.move_piece(pos)
+                    self.end_move()
+                else:
                     self.selectedPiece = None
 
     def events(self):

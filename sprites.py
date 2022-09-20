@@ -26,6 +26,7 @@ def reset_moves(chessPiece):
     chessPiece.possibleMoves.clear()
     chessPiece.captureMoves.clear()
 
+# TODO: Add en passant
 class Pawn(pg.sprite.Sprite):
     def __init__(self, game, color, dir, x, y):
         pg.sprite.Sprite.__init__(self, game.all_sprites)
@@ -91,10 +92,10 @@ class Pawn(pg.sprite.Sprite):
         if(check_move_bounds(move)):
             if capture:
                 self.captureMoves.append(move)
-                if(self.game.chessMatrix[move[1]][move[0]] != " "):
+                if(self.game.chessMatrix[move[1]][move[0]] != None):
                     self.possibleMoves.append(move)
             else:
-                if(self.game.chessMatrix[move[1]][move[0]] == " "):
+                if(self.game.chessMatrix[move[1]][move[0]] == None):
                     self.possibleMoves.append(move)
     
 class Rook(pg.sprite.Sprite):
