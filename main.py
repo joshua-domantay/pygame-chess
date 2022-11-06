@@ -69,6 +69,12 @@ class Game:
         self.playing = True
         self.all_sprites = pg.sprite.Group()
         self.generate_chess_matrix()
+        for i in self.all_sprites:
+            if(i.piece == "king"):
+                if(i.color == "white"):
+                    self.king_white = i
+                else:
+                    self.king_black = i
         self.turnColor = "white"
         self.selectedPiece = None
         self.run()
@@ -83,9 +89,24 @@ class Game:
         pass
 
     def get_enemy_moves(self):
+        moves = []
         for i in self.all_sprites:
-            if(i.color == self.turnColor):
+            if(i.color != self.turnColor):
                 i.get_moves()
+                for move in i.possibleMoves:
+                    moves.append(move)
+        return moves
+
+    def check_move(self):
+        moves = self.get_enemy_moves()
+        for move in moves:
+            if(self.turnColor == "white"):
+                if((move[0] == self.king_white.x) and (move[1] == self.king_white.y)):      # To check if next enemy move captures king
+                    return False
+            else:
+                if((move[0] == self.king_black.x) and (move[1] == self.king_black.y)):      # To check if next enemy move captures king
+                    return False
+        return True
 
     def end_move(self):
         if(self.turnColor == "white"):
@@ -93,14 +114,28 @@ class Game:
         else:
             self.turnColor = "white"
         self.selectedPiece = None
-        self.get_enemy_moves()      # To prevent King from moving on a capture tile
+        # TODO: If king is in check, examine if game is in checkmate
     
     def move_piece(self, move):
-        self.chessMatrix[self.selectedPiece.y][self.selectedPiece.x] = None     # Remove piece from current tile on Chess 2D array
-        if(self.chessMatrix[move[1]][move[0]] != None):     # If capturing, remove enemy piece from game
-            self.chessMatrix[move[1]][move[0]].kill()
+        prevX = self.selectedPiece.x
+        prevY = self.selectedPiece.y
+        prevPiece = self.chessMatrix[move[1]][move[0]]
+
+        self.chessMatrix[prevY][prevX] = None     # Remove piece from current tile on Chess 2D array  
+        toKill = self.chessMatrix[move[1]][move[0]]     # If capturing, remove enemy piece from game later if valid move
         self.selectedPiece.move(move[0], move[1])       # Move piece
         self.chessMatrix[move[1]][move[0]] = self.selectedPiece     # Move piece on Chess 2D array
+        
+        # Check if king is safe after move
+        validMove = self.check_move()
+        if(validMove):      # If valid move, kill captured piece
+            if(toKill != None):
+                toKill.kill()
+        else:       # If not valid move, revert before move
+            self.chessMatrix[prevY][prevX] = self.selectedPiece
+            self.selectedPiece.move(prevX, prevY)
+            self.chessMatrix[move[1]][move[0]] = prevPiece
+        return validMove
     
     def event_quit(self, event):
         if(event.type == pg.QUIT):
@@ -113,15 +148,17 @@ class Game:
         if(event.type == pg.MOUSEBUTTONUP):
             pos = pg.mouse.get_pos()
             pos = (int(pos[0] / self.tilesize), int(pos[1] / self.tilesize))        # Easier to get which tile is clicked and easier access to chessMatrix
-            if(self.selectedPiece == None):
+            if(self.selectedPiece == None):     # Get moving piece
                 if(self.chessMatrix[pos[1]][pos[0]] != None):       # Check if there is a piece on tile
                     if(self.chessMatrix[pos[1]][pos[0]].color == self.turnColor):       # Check if piece is the same color as turn
                         self.selectedPiece = self.chessMatrix[pos[1]][pos[0]]
                         self.selectedPiece.get_moves()
             else:
-                if(pos in self.selectedPiece.possibleMoves):
-                    self.move_piece(pos)
-                    self.end_move()
+                if(pos in self.selectedPiece.possibleMoves):    # Check if possible move
+                    if(self.move_piece(pos)):       # End move if success
+                        self.end_move()
+                    else:
+                        self.selectedPiece = None
                 else:
                     self.selectedPiece = None
 
