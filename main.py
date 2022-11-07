@@ -97,7 +97,7 @@ class Game:
                     moves.append(move)
         return moves
 
-    def check_move(self):
+    def check_move(self):       # Can be used to see if king is in check -> not self.check_move()
         moves = self.get_enemy_moves()
         for move in moves:
             if(self.turnColor == "white"):
@@ -114,7 +114,6 @@ class Game:
         else:
             self.turnColor = "white"
         self.selectedPiece = None
-        # TODO: If king is in check, examine if game is in checkmate
     
     def move_piece(self, move):
         prevX = self.selectedPiece.x
@@ -137,6 +136,19 @@ class Game:
             self.chessMatrix[move[1]][move[0]] = prevPiece
         return validMove
     
+    def is_checkmate(self):
+        if(not self.check_move()):      # If check
+            for i in self.all_sprites:
+                if(i.color == self.turnColor):
+                    i.get_moves()
+                    if(len(i.possibleMoves) > 0):       # TODO: This checks piece possible moves, but not for ensuring king's safe
+                        print(i.piece + " : " + i.color + " : " + str(i.x) + " : " + str(i.y))
+                        for move in i.possibleMoves:
+                            print(move)
+                        return False
+            return True
+        return False
+    
     def event_quit(self, event):
         if(event.type == pg.QUIT):
             pg.quit()
@@ -157,6 +169,8 @@ class Game:
                 if(pos in self.selectedPiece.possibleMoves):    # Check if possible move
                     if(self.move_piece(pos)):       # End move if success
                         self.end_move()
+                        if(self.is_checkmate()):
+                            print("CHECKMATE")
                     else:
                         self.selectedPiece = None
                 else:
